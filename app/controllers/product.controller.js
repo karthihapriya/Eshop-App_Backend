@@ -38,4 +38,59 @@ const getProductById = async (req, res)=>{
   }
 }
 
-module.exports = {searchProducts, getCategories, getProductById};
+const saveProduct = async (req, res)=>{
+  try {
+    const {name, availableItems, price, category, description,  imageUrl, manufacturer} = req.body;
+    const productId = await Product.find({}).count() + 1;
+    try{
+      const product = new Product({
+        productId : parseInt(productId),
+        name,
+        category,
+        manufacturer,
+        availableItems : parseInt(availableItems),
+        price : parseFloat(price),
+        imageUrl,
+        description
+      });
+      const newProduct = await product.save();
+      console.log(newProduct);
+      res.status(201).json(newProduct);
+    }catch(err){
+      console.log(err);
+      res.status(400).json({message : "Incomplete / Invalid entries"});
+      return;
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({message : "Some error occured, please try again"});
+  }
+}
+
+const updateProduct= async (req, res)=>{
+  try {
+    const {name, availableItems, price, category, description, imageUrl, manufacturer} = req.body;
+    const productId = parseInt(req.params.id);
+    const product = await Product.findOne({productId});
+    if(!product){
+      res.status(404).json({message : `No Product found for ID - ${productId}!`});
+      return;
+    }
+    const updatedProduct = await Product.findOneAndUpdate({productId}, {
+      name,
+      availableItems : parseInt(availableItems),
+      price : parseInt(price),
+      category,
+      description,
+      imageUrl,
+      manufacturer
+    },
+    {new : true});
+    res.status(201).json(updatedProduct);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({message : "Some error occured, please try again"});
+  }
+}
+
+module.exports = {searchProducts, getCategories, getProductById, saveProduct};
