@@ -1,5 +1,9 @@
 module.exports = (mongoose)=>{
   const Product = mongoose.model('product', new mongoose.Schema({
+    productId : {
+      type : Number,
+      required : true
+    },
     name : {
       type : String,
       required : true
@@ -27,14 +31,6 @@ module.exports = (mongoose)=>{
     description : {
       type : String,
       required : true
-    },
-    updatedAt : {
-      type : Date,
-      max : (new Date()).getDate()
-    },
-    createdAt : {
-      type : Date,
-      max : (new Date()).getDate()
     }
   },
   {timeStamps : true}
